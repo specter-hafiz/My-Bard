@@ -6,7 +6,6 @@ import 'package:my_pa/model/response_model.dart';
 import 'package:my_pa/provider/db_provider.dart';
 import 'package:my_pa/widgets/chat_input_box.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class StreamChat extends StatefulWidget {
   const StreamChat({super.key});
@@ -26,6 +25,7 @@ class _StreamChatState extends State<StreamChat> {
   set loading(bool set) => setState(() => _loading = set);
   final List<Content> chats = [];
   String question = "";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,35 +48,47 @@ class _StreamChatState extends State<StreamChat> {
                 : const Center(
                     child: Text("Search something !"),
                   )),
-        if (loading) Lottie.asset("assets/loading.json", width: 100),
+        if (loading)
+          Align(
+              alignment: Alignment.bottomLeft,
+              child: Lottie.asset("assets/loading.json", width: 100)),
         ChatInputBox(
           controller: controller,
-          onSend: () {
+          onSend: () async {
             if (controller.text.isNotEmpty) {
               searchedText = controller.text;
               chats.add(
                   Content(role: "user", parts: [Parts(text: searchedText)]));
-              setState(() {
-                question = controller.text;
-              });
+
               controller.clear();
               loading = true;
-              gemini.streamChat(chats).listen((value) {
-                loading = false;
-                setState(() {
-                  if (chats.isNotEmpty &&
-                      (chats.last.role == value.content?.role)) {
-                    chats.last.parts?.last.text =
-                        "${chats.last.parts?.last.text}${value.output}";
-                  } else {
-                    chats.add(Content(
-                        role: "model", parts: [Parts(text: value.output)]));
-                  }
-                });
-              }).onError((error) {
-                loading = false;
-                print("An error occurred: $error");
-              });
+              gemini.streamChat(chats).listen(
+                  (value) {
+                    loading = false;
+                    setState(() {
+                      if (chats.isNotEmpty &&
+                          (chats.last.role == value.content?.role)) {
+                        chats.last.parts?.last.text =
+                            "${chats.last.parts?.last.text}${value.output}";
+                      } else {
+                        chats.add(Content(
+                            role: "model", parts: [Parts(text: value.output)]));
+                      }
+                    });
+                  },
+                  cancelOnError: true,
+                  onError: (err) {
+                    loading = false;
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          Future.delayed(const Duration(seconds: 2),
+                              () => Navigator.of(context).pop());
+                          return const AlertDialog(
+                            title: Text("An error ocurred!"),
+                          );
+                        });
+                  });
             }
           },
         )
@@ -84,6 +96,7 @@ class _StreamChatState extends State<StreamChat> {
     );
   }
 
+  bool ontap = false;
   Widget chatItem(BuildContext context, int index) {
     final Content content = chats[index];
     return Column(
@@ -121,16 +134,29 @@ class _StreamChatState extends State<StreamChat> {
               if (content.role == "model")
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       final response = Response(
                           id: DateTime.now().toString(),
                           content: (content.parts?.lastOrNull?.text)!,
                           date: DateTime.now().toString(),
                           question: question);
-                      Provider.of<DBProvider>(context, listen: false)
-                          .addResponse(response);
+
+                      await Future.value(
+                              Provider.of<DBProvider>(context, listen: false)
+                                  .addResponse(response))
+                          .then((_) {
+                        setState(() {
+                          if (ontap) {
+                            ontap = false;
+                          } else {
+                            ontap = true;
+                          }
+                        });
+                      });
                     },
-                    icon: const Icon(Icons.favorite_outlined),
+                    icon: Icon(ontap
+                        ? Icons.favorite_outlined
+                        : Icons.favorite_border),
                   ),
                   IconButton(
                     onPressed: () async {
@@ -148,12 +174,6 @@ class _StreamChatState extends State<StreamChat> {
                     },
                     icon: const Icon(Icons.copy_outlined),
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      await Share.share((content.parts?.lastOrNull?.text)!);
-                    },
-                    icon: const Icon(Icons.share_rounded),
-                  )
                 ])
             ],
           ),

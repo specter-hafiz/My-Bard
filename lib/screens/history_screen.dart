@@ -69,6 +69,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     );
                   });
             }
+
             return const Center(
               child: Text("No data"),
             );
@@ -100,7 +101,9 @@ class ResponseItem extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => DetailScreen(
+                id: id,
                 content: content,
+                question: question,
               ),
             ),
           );
@@ -120,7 +123,7 @@ class ResponseItem extends StatelessWidget {
               child: IconButton(
                   onPressed: () {
                     Provider.of<DBProvider>(context, listen: false)
-                        .deleteResponse(id, context);
+                        .deleteResponse(id);
                   },
                   icon: const Icon(Icons.delete_outlined)),
             )

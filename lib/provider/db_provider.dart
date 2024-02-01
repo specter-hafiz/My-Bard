@@ -29,7 +29,7 @@ class DBProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  editResponse(Response id, content) async {
+  editResponse(String id, String content) async {
     final db = await openDb();
     await db.update(
       "responses",
@@ -43,7 +43,7 @@ class DBProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteResponse(String id, BuildContext context) async {
+  deleteResponse(String id) async {
     final db = await openDb();
     await db.delete(
       "responses",
