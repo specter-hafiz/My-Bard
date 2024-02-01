@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:lottie/lottie.dart';
+import 'package:my_pa/model/response_model.dart';
+import 'package:my_pa/provider/db_provider.dart';
 import 'package:my_pa/widgets/chat_input_box.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class StreamChat extends StatefulWidget {
   const StreamChat({super.key});
@@ -20,6 +25,7 @@ class _StreamChatState extends State<StreamChat> {
 
   set loading(bool set) => setState(() => _loading = set);
   final List<Content> chats = [];
+  String question = "";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -50,6 +56,9 @@ class _StreamChatState extends State<StreamChat> {
               searchedText = controller.text;
               chats.add(
                   Content(role: "user", parts: [Parts(text: searchedText)]));
+              setState(() {
+                question = controller.text;
+              });
               controller.clear();
               loading = true;
               gemini.streamChat(chats).listen((value) {
@@ -107,7 +116,45 @@ class _StreamChatState extends State<StreamChat> {
               Text(
                 content.parts?.lastOrNull?.text ?? "Cannot generate data !",
                 textAlign: TextAlign.start,
-              )
+              ),
+              if (content.role == "model") const Divider(),
+              if (content.role == "model")
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  IconButton(
+                    onPressed: () {
+                      final response = Response(
+                          id: DateTime.now().toString(),
+                          content: (content.parts?.lastOrNull?.text)!,
+                          date: DateTime.now().toString(),
+                          question: question);
+                      Provider.of<DBProvider>(context, listen: false)
+                          .addResponse(response);
+                    },
+                    icon: const Icon(Icons.favorite_outlined),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(
+                              text: (content.parts?.lastOrNull?.text)!))
+                          .then((_) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("Text copied"),
+                          duration: Duration(
+                            milliseconds: 500,
+                          ),
+                        ));
+                      });
+                    },
+                    icon: const Icon(Icons.copy_outlined),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await Share.share((content.parts?.lastOrNull?.text)!);
+                    },
+                    icon: const Icon(Icons.share_rounded),
+                  )
+                ])
             ],
           ),
         ),

@@ -9,6 +9,6 @@ ThemeData lightTheme = ThemeData(
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     cardTheme: CardTheme(color: Colors.blue.shade900),
-    colorScheme: ColorScheme.light(
+    colorScheme: ColorScheme.dark(
       primary: Colors.blue.shade900,
     ));

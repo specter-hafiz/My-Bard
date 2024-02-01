@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_pa/screens/stream_chat.dart';
+import 'package:my_pa/provider/theme_provider.dart';
+import 'package:my_pa/screens/history_screen.dart';
+import 'package:my_pa/widgets/stream_chat.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -24,12 +27,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 PopupMenuItem(
                   value: "History",
                   child: const Text("History"),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const HistoryScreen(),
+                      ),
+                    );
+                  },
                 ),
                 PopupMenuItem(
                   value: "Theme",
                   child: const Text("Change theme"),
-                  onTap: () {},
+                  onTap: () {
+                    Provider.of<ThemeProvider>(context, listen: false)
+                        .toggleTheme();
+                  },
                 ),
                 PopupMenuItem(
                   value: "About",

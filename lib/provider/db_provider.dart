@@ -8,7 +8,7 @@ class DBProvider extends ChangeNotifier {
     final database = await openDatabase(
       join(
         await getDatabasesPath(),
-        "todo.db",
+        "responses.db",
       ),
       onCreate: (db, version) async {
         return await db.execute(
@@ -19,7 +19,7 @@ class DBProvider extends ChangeNotifier {
     return database;
   }
 
-  addTodo(Response response) async {
+  addResponse(Response response) async {
     final db = await openDb();
     await db.insert(
       "responses",
@@ -29,16 +29,34 @@ class DBProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTodo(String id, BuildContext context) async {
+  editResponse(Response id, content) async {
+    final db = await openDb();
+    await db.update(
+      "responses",
+      {
+        "content": content,
+      },
+      where: "id=?",
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    notifyListeners();
+  }
+
+  deleteResponse(String id, BuildContext context) async {
     final db = await openDb();
     await db.delete(
       "responses",
       where: "id = ?",
       whereArgs: [id],
-    ).then((_) {
-      Navigator.of(context).pop();
-    });
+    );
 
+    notifyListeners();
+  }
+
+  deleteAllResponses() async {
+    final db = await openDb();
+    await db.delete("responses");
     notifyListeners();
   }
 

@@ -9,29 +9,24 @@ import 'package:provider/provider.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Gemini.init(apiKey: secreteKey, enableDebugging: true);
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(value: ThemeProvider()),
+      ChangeNotifierProvider.value(value: DBProvider()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<ThemeProvider>(
-          create: (_) => ThemeProvider(),
-        ),
-        Provider<DBProvider>(
-          create: (_) => DBProvider(),
-        )
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        themeMode: ThemeMode.dark,
-        debugShowCheckedModeBanner: false,
-        theme: Provider.of<ThemeProvider>(context, listen: false).themeData,
-        home: const MyHomePage(),
-      ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: Provider.of<ThemeProvider>(context).themeData,
+      home: const MyHomePage(),
     );
   }
 }
