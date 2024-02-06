@@ -60,6 +60,39 @@ class DBProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  removeContent(String content) async {
+    final db = await openDb();
+    await db.delete(
+      "responses",
+      where: "content = ?",
+      whereArgs: [content],
+    );
+
+    notifyListeners();
+  }
+
+  Future<bool> checkResponse(String content) async {
+    final db = await openDb();
+    final list = await db.query(
+      "responses",
+      where: "content = ?",
+      whereArgs: [content],
+    );
+    notifyListeners();
+
+    return list.isNotEmpty;
+  }
+
+  countResponses() async {
+    final db = await openDb();
+    final List<Map<String, dynamic>> count = await db.query(
+      "responses",
+    );
+    notifyListeners();
+
+    return count.length;
+  }
+
   Future<List<Response>> responsesList() async {
     final db = await openDb();
 

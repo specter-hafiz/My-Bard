@@ -37,7 +37,9 @@ class _StreamChatState extends State<StreamChat> {
                     child: SingleChildScrollView(
                       reverse: true,
                       child: ListView.builder(
-                        itemBuilder: chatItem,
+                        itemBuilder: (context, index) {
+                          return ChatItemWidget(content: chats[index]);
+                        },
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: chats.length,
@@ -59,7 +61,7 @@ class _StreamChatState extends State<StreamChat> {
               searchedText = controller.text;
               chats.add(
                   Content(role: "user", parts: [Parts(text: searchedText)]));
-
+              question = searchedText!;
               controller.clear();
               loading = true;
               gemini.streamChat(chats).listen(
@@ -95,12 +97,24 @@ class _StreamChatState extends State<StreamChat> {
       ],
     );
   }
+}
 
-  bool ontap = false;
-  Widget chatItem(BuildContext context, int index) {
-    final Content content = chats[index];
+class ChatItemWidget extends StatefulWidget {
+  final Content content;
+
+  const ChatItemWidget({super.key, required this.content});
+
+  @override
+  ChatItemWidgetState createState() => ChatItemWidgetState();
+}
+
+class ChatItemWidgetState extends State<ChatItemWidget> {
+  bool isToggled = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: content.role == "model"
+      crossAxisAlignment: widget.content.role == "model"
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
       children: [
@@ -109,59 +123,63 @@ class _StreamChatState extends State<StreamChat> {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
-              color:
-                  content.role == "model" ? Colors.blue.shade800 : Colors.green,
+              color: widget.content.role == "model"
+                  ? Colors.blue.shade800
+                  : Colors.green,
               borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(12),
-                  bottomLeft: content.role == "model"
+                  bottomLeft: widget.content.role == "model"
                       ? const Radius.circular(0)
                       : const Radius.circular(12),
-                  bottomRight: content.role == "model"
+                  bottomRight: widget.content.role == "model"
                       ? const Radius.circular(12)
                       : const Radius.circular(0))),
           child: Column(
-            crossAxisAlignment: content.role == "model"
+            crossAxisAlignment: widget.content.role == "model"
                 ? CrossAxisAlignment.start
                 : CrossAxisAlignment.end,
             children: [
-              Text(content.role == "model" ? "P.A" : "ME"),
+              Text(widget.content.role == "model" ? "P.A" : "ME"),
               Text(
-                content.parts?.lastOrNull?.text ?? "Cannot generate data !",
+                widget.content.parts?.lastOrNull?.text ??
+                    "Cannot generate data !",
                 textAlign: TextAlign.start,
               ),
-              if (content.role == "model") const Divider(),
-              if (content.role == "model")
+              if (widget.content.role == "model") const Divider(),
+              if (widget.content.role == "model")
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   IconButton(
                     onPressed: () async {
                       final response = Response(
                           id: DateTime.now().toString(),
-                          content: (content.parts?.lastOrNull?.text)!,
+                          content: (widget.content.parts?.lastOrNull?.text)!,
                           date: DateTime.now().toString(),
-                          question: question);
+                          question: "question");
 
-                      await Future.value(
-                              Provider.of<DBProvider>(context, listen: false)
-                                  .addResponse(response))
-                          .then((_) {
-                        setState(() {
-                          if (ontap) {
-                            ontap = false;
-                          } else {
-                            ontap = true;
-                          }
-                        });
+                      bool responseExist =
+                          await Provider.of<DBProvider>(context, listen: false)
+                              .checkResponse(response.content);
+                      if (responseExist) {
+                        await Provider.of<DBProvider>(context, listen: false)
+                            .removeContent(response.content);
+                      } else {
+                        await Provider.of<DBProvider>(context, listen: false)
+                            .addResponse(response);
+                      }
+
+                      setState(() {
+                        isToggled = !isToggled; // Toggle the favorite button
                       });
                     },
-                    icon: Icon(ontap
-                        ? Icons.favorite_outlined
-                        : Icons.favorite_border),
+                    icon: Icon(isToggled
+                        ? Icons.favorite
+                        : Icons.favorite_border), // Use the toggled state
                   ),
                   IconButton(
                     onPressed: () async {
                       await Clipboard.setData(ClipboardData(
-                              text: (content.parts?.lastOrNull?.text)!))
+                              text: (widget.content.parts?.lastOrNull?.text)!))
                           .then((_) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(

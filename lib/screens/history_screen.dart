@@ -1,8 +1,11 @@
+//import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_pa/provider/db_provider.dart';
 import 'package:my_pa/screens/detail_screen.dart';
+//import 'package:my_pa/widgets/key.dart';
 import 'package:provider/provider.dart';
+//import 'package:http/http.dart' as http;
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -12,6 +15,41 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  // Future getPrediction(String question) async {
+  //   try {
+  //     String url =
+  //         "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$secreteKey";
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: jsonEncode({
+  //         "contents": [
+  //           {
+  //             "parts": [
+  //               {"text": question}
+  //             ]
+  //           }
+  //         ]
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final decodedResponse =
+  //           jsonDecode(response.body) as Map<String, dynamic>;
+  //       print("success");
+
+  //       print(decodedResponse);
+  //       return decodedResponse;
+  //     } else {
+  //       throw Exception('Failed to get prediction');
+  //     }
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
+  //var data = getPrediction("What is my name?");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
