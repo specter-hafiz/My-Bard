@@ -62,35 +62,45 @@ class _StreamChatState extends State<StreamChat> {
               chats.add(
                   Content(role: "user", parts: [Parts(text: searchedText)]));
               question = searchedText!;
+
               controller.clear();
               loading = true;
-              gemini.streamChat(chats).listen(
-                  (value) {
-                    loading = false;
-                    setState(() {
-                      if (chats.isNotEmpty &&
-                          (chats.last.role == value.content?.role)) {
-                        chats.last.parts?.last.text =
-                            "${chats.last.parts?.last.text}${value.output}";
-                      } else {
-                        chats.add(Content(
-                            role: "model", parts: [Parts(text: value.output)]));
+
+              try {
+                gemini.streamChat(chats).listen(
+                    (value) {
+                      loading = false;
+                      setState(() {
+                        if (chats.isNotEmpty &&
+                            (chats.last.role == value.content?.role)) {
+                          chats.last.parts?.last.text =
+                              "${chats.last.parts?.last.text}${value.output}";
+                        } else {
+                          chats.add(Content(
+                              role: "model",
+                              parts: [Parts(text: value.output)]));
+                        }
+                      });
+                    },
+                    cancelOnError: true,
+                    onError: (err) {
+                      if (chats.isNotEmpty) {
+                        chats.removeLast();
                       }
+                      loading = false;
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            Future.delayed(const Duration(seconds: 2),
+                                () => Navigator.of(context).pop());
+                            return const AlertDialog(
+                              title: Text("Sorry,an error ocurred!"),
+                            );
+                          });
                     });
-                  },
-                  cancelOnError: true,
-                  onError: (err) {
-                    loading = false;
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          Future.delayed(const Duration(seconds: 2),
-                              () => Navigator.of(context).pop());
-                          return const AlertDialog(
-                            title: Text("An error ocurred!"),
-                          );
-                        });
-                  });
+              } catch (e) {
+                debugPrint("ERR:${e.toString()}");
+              }
             }
           },
         )
@@ -157,15 +167,19 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                           date: DateTime.now().toString(),
                           question: "question");
 
-                      bool responseExist =
-                          await Provider.of<DBProvider>(context, listen: false)
-                              .checkResponse(response.content);
+                      bool responseExist = await Provider.of<DBProvider>(
+                              context,
+                              listen: false)
+                          .checkResponse(response
+                              .content); //this method checks whether the DB already has content of that sort stored
                       if (responseExist) {
                         await Provider.of<DBProvider>(context, listen: false)
-                            .removeContent(response.content);
+                            .removeContent(response
+                                .content); //removes content from the DB if it exists
                       } else {
                         await Provider.of<DBProvider>(context, listen: false)
-                            .addResponse(response);
+                            .addResponse(
+                                response); //it adds content to the DB if it doesn't exist
                       }
 
                       setState(() {
@@ -179,6 +193,7 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                   IconButton(
                     onPressed: () async {
                       await Clipboard.setData(ClipboardData(
+                              // use to copy text to clipboard
                               text: (widget.content.parts?.lastOrNull?.text)!))
                           .then((_) {
                         ScaffoldMessenger.of(context)
