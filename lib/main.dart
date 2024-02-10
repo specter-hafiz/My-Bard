@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:my_pa/keys/gemini_key.dart';
 import 'package:my_pa/provider/db_provider.dart';
 import 'package:my_pa/provider/theme_provider.dart';
 import 'package:my_pa/screens/home_screen.dart';
-import 'package:my_pa/widgets/key.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+
   Gemini.init(apiKey: secreteKey, enableDebugging: true);
   runApp(MultiProvider(
     providers: [

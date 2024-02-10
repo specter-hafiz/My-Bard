@@ -92,34 +92,36 @@ class DBProvider extends ChangeNotifier {
     return list.isNotEmpty;
   }
 
-  // Future<bool> searchResponse(TimePeriod selectedTimePeriod) async {
+  // Future<List<Map<String, dynamic>>> getItems(String filter) async {
   //   final db = await openDb();
-  //   DateTime startDate;
-  //   DateTime now = DateTime.now();
-  //   bool hasResponse;
-  //   if (selectedTimePeriod != TimePeriod.all) {
-  //     List<Map<String, dynamic>> list = await db.query(
-  //       "responses",
-  //     );
-  //     hasResponse = list.isNotEmpty;
-  //   } else {
-  //     if (selectedTimePeriod == TimePeriod.today) {
-  //       startDate = DateTime(now.year, now.month, now.day);
-  //     } else if (selectedTimePeriod == TimePeriod.lastWeek) {
-  //       startDate = now.subtract(const Duration(days: 7));
-  //     } else if (selectedTimePeriod == TimePeriod.lastMonth) {
-  //       startDate = DateTime(now.year, now.month - 1, now.day);
-  //     }
-  //     List<Map<String, dynamic>> list = await db.query(
-  //       "responses",
-  //       where: "date >= ?",
-  //       whereArgs: [startDate],
-  //     );
-  //     hasResponse = list.isNotEmpty;
-  //   }
+  //   DateTime date = DateTime.now();
 
-  //   notifyListeners();
-  //   return hasResponse;
+  //   switch (filter) {
+  //     case 'daily':
+  //       return await db
+  //           .query("responses", where: "date = ?", whereArgs: [date]);
+  //     case 'last_week':
+  //       return await db.query("responses", where: "date >= ?", whereArgs: [
+  //         DateTime(
+  //           date.year,
+  //           date.month,
+  //           date.day,
+  //           date.hour,
+  //           date.minute,
+  //           date.second,
+  //           date.millisecond,
+  //         ).difference(other)
+  //       ]);
+  //     case 'last_month':
+  //       return await db.rawQuery('''
+  //         SELECT * FROM your_table
+  //         WHERE date_added BETWEEN DATE('now', '-1 month', 'localtime') AND DATE('now', 'localtime')
+  //       ''');
+  //     default:
+  //       return await db.rawQuery('''
+  //         SELECT * FROM your_table
+  //       ''');
+  //   }
   // }
 
   Future<int> countResponses() async {
