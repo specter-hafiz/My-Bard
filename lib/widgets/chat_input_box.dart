@@ -25,7 +25,7 @@ class ChatInputBox extends StatelessWidget {
             keyboardType: TextInputType.multiline,
             decoration: const InputDecoration(
               contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-              hintText: "Message",
+              hintText: "Enter prompt here",
               border: InputBorder.none,
             ),
             onTapOutside: (event) =>

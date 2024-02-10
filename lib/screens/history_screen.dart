@@ -27,7 +27,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
               final responses = snapshot.data;
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return Center(
+                  child: const CircularProgressIndicator(),
+                );
               }
               if (snapshot.data!.isNotEmpty) {
                 return ListView.builder(
@@ -43,7 +45,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
               }
 
               return const Center(
-                child: Text("No data"),
+                child: Text(
+                  "No responses yet!\nTap 🤍 on any response to be added!",
+                  textAlign: TextAlign.center,
+                ),
               );
             }),
       );
