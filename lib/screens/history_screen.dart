@@ -44,9 +44,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     });
               }
 
-              return const Center(
+              return Center(
                 child: Text(
-                  "No responses yet!\nTap 🤍 on any response to be added!",
+                  "No response(s) added yet!\nTap 🤍 on any generated response to be added!",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
               );

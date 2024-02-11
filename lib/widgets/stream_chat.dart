@@ -18,13 +18,13 @@ class _StreamChatState extends State<StreamChat> {
   final controller = TextEditingController();
   final gemini = Gemini.instance;
   bool _loading = false;
-  String? searchedText, result;
+  String? searchedText;
 
   bool get loading => _loading;
 
   set loading(bool set) => setState(() => _loading = set);
   final List<Content> chats = [];
-  String question = "";
+  final List<String?> questions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,10 @@ class _StreamChatState extends State<StreamChat> {
                       reverse: true,
                       child: ListView.builder(
                         itemBuilder: (context, index) {
-                          return ChatItemWidget(content: chats[index]);
+                          return ChatItemWidget(
+                            content: chats[index],
+                            // question: questions[index]!,
+                          );
                         },
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -47,8 +50,17 @@ class _StreamChatState extends State<StreamChat> {
                       ),
                     ),
                   )
-                : const Center(
-                    child: Text("Search something !"),
+                : Center(
+                    child: Text(
+                      "Enter your search item below !",
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontSize: 18, fontWeight: FontWeight.w400),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   )),
         if (loading)
           Align(
@@ -61,7 +73,7 @@ class _StreamChatState extends State<StreamChat> {
               searchedText = controller.text;
               chats.add(
                   Content(role: "user", parts: [Parts(text: searchedText)]));
-              question = searchedText!;
+              //questions.add(searchedText!);
 
               controller.clear();
               loading = true;
@@ -86,6 +98,7 @@ class _StreamChatState extends State<StreamChat> {
                     onError: (err) {
                       if (chats.isNotEmpty) {
                         chats.removeLast();
+                        // questions.removeLast();
                       }
                       loading = false;
                       showDialog(
@@ -111,8 +124,13 @@ class _StreamChatState extends State<StreamChat> {
 
 class ChatItemWidget extends StatefulWidget {
   final Content content;
+  //final String question;
 
-  const ChatItemWidget({super.key, required this.content});
+  const ChatItemWidget({
+    super.key,
+    required this.content,
+    // required this.question
+  });
 
   @override
   ChatItemWidgetState createState() => ChatItemWidgetState();
@@ -165,7 +183,7 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                           id: DateTime.now().toString(),
                           content: (widget.content.parts?.lastOrNull?.text)!,
                           date: DateTime.now().toString(),
-                          question: "question");
+                          question: "widget.question");
 
                       bool responseExist = await Provider.of<DBProvider>(
                               context,

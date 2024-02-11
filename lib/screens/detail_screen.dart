@@ -49,7 +49,6 @@ class _DetailScreenState extends State<DetailScreen> {
       onAdFailedToShowFullScreenContent: (aD, err) async {
         debugPrint("Ad failed to show full screen");
 
-        aD.dispose();
         await Share.share(controller.text);
         loadInterstitialAd();
       },
@@ -67,10 +66,10 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   void initState() {
+    super.initState();
     loadInterstitialAd();
     controller = TextEditingController();
     controller.text = widget.content;
-    super.initState();
   }
 
   @override
@@ -111,24 +110,27 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ]),
         body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.tealAccent,
-                child: Text("Question:\n${widget.question}"),
-              ),
-              Container(color: Colors.amber, child: const Text("Response:")),
-              TextField(
-                maxLines: null,
-                controller: controller,
-                textInputAction: TextInputAction.newline,
-                decoration: const InputDecoration(
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  color: Colors.tealAccent,
+                  child: Text("Question:\n${widget.question}"),
                 ),
-              ),
-            ],
+                Container(color: Colors.amber, child: const Text("Response:")),
+                TextField(
+                  maxLines: null,
+                  controller: controller,
+                  textInputAction: TextInputAction.newline,
+                  decoration: const InputDecoration(
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
   }
