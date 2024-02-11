@@ -152,8 +152,8 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
               color: widget.content.role == "model"
-                  ? Colors.blue.shade800
-                  : Colors.green,
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(12),
@@ -164,15 +164,24 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                       ? const Radius.circular(12)
                       : const Radius.circular(0))),
           child: Column(
-            crossAxisAlignment: widget.content.role == "model"
-                ? CrossAxisAlignment.start
-                : CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.content.role == "model" ? "P.A" : "ME"),
+              CircleAvatar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.primary.withAlpha(70),
+                child: Text(
+                  widget.content.role == "model" ? "P.A" : "ME",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
               Text(
                 widget.content.parts?.lastOrNull?.text ??
                     "Cannot generate data !",
                 textAlign: TextAlign.start,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 16, fontWeight: FontWeight.w300),
               ),
               if (widget.content.role == "model") const Divider(),
               if (widget.content.role == "model")

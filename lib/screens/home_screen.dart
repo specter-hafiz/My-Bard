@@ -24,7 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 .titleLarge!
                 .copyWith(fontSize: 20, fontWeight: FontWeight.w600),
           ),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           actions: [
             PopupMenuButton(itemBuilder: (context) {
               return [

@@ -12,6 +12,7 @@ class ChatInputBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 1,
       color: Theme.of(context).cardTheme.color,
       margin: const EdgeInsets.all(8),
       child: Row(
@@ -24,7 +25,7 @@ class ChatInputBox extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium!
-                .copyWith(fontWeight: FontWeight.w500, fontSize: 18),
+                .copyWith(fontWeight: FontWeight.w400, fontSize: 18),
             cursorColor: Theme.of(context).colorScheme.inversePrimary,
             textInputAction: TextInputAction.newline,
             keyboardType: TextInputType.multiline,

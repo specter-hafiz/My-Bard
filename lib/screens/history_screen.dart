@@ -19,6 +19,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     {
       return Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           title: const Text("History"),
         ),
         body: FutureBuilder(
@@ -46,7 +47,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               return Center(
                 child: Text(
-                  "No response(s) added yet!\nTap 🤍 on any generated response to be added!",
+                  "No response(s) added yet!\nTap 🤍 on any generated response to add!",
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!

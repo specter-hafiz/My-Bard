@@ -87,28 +87,32 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Edit Response"), actions: [
-          IconButton(
-            onPressed: () async {
-              if (widget.content == controller.text) {
-                Navigator.of(context).pop();
-                return;
-              }
-              await Future.value(Provider.of<DBProvider>(context, listen: false)
-                      .editResponse(widget.id, controller.text))
-                  .then((_) {
-                Navigator.of(context).pop();
-              });
-            },
-            icon: const Icon(Icons.check_outlined),
-          ),
-          IconButton(
-            onPressed: () async {
-              controller.text.isEmpty ? null : showInterstitialAd();
-            },
-            icon: const Icon(Icons.share_outlined),
-          ),
-        ]),
+        appBar: AppBar(
+            titleSpacing: 0,
+            title: const Text("Edit Response"),
+            actions: [
+              IconButton(
+                onPressed: () async {
+                  if (widget.content == controller.text) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
+                  await Future.value(
+                          Provider.of<DBProvider>(context, listen: false)
+                              .editResponse(widget.id, controller.text))
+                      .then((_) {
+                    Navigator.of(context).pop();
+                  });
+                },
+                icon: const Icon(Icons.check_outlined),
+              ),
+              IconButton(
+                onPressed: () async {
+                  controller.text.isEmpty ? null : showInterstitialAd();
+                },
+                icon: const Icon(Icons.share_outlined),
+              ),
+            ]),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),

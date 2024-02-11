@@ -2,17 +2,28 @@ import 'package:flutter/material.dart';
 
 ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
-    cardTheme: CardTheme(color: Colors.black12),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(),
+    textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.black)),
+    cardTheme: CardTheme(color: Colors.white24),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: Colors.white70,
+      foregroundColor: Colors.black,
+    ),
     colorScheme: ColorScheme.light(
+      secondary: Colors.blue.shade400,
+      primaryContainer: Colors.grey.shade400,
       primary: Colors.white,
     ));
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    cardTheme: CardTheme(color: Colors.white12),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: Colors.black54,
+      foregroundColor: Colors.white,
+    ),
+    cardTheme: CardTheme(color: Colors.white10),
     colorScheme: ColorScheme.dark(
-      primary: Colors.black54,
+      primaryContainer: Colors.grey.shade800,
+      secondary: Colors.blue.shade800,
+      primary: Colors.black,
     ));
 
 
