@@ -12,11 +12,9 @@ class DetailScreen extends StatefulWidget {
     super.key,
     required this.content,
     required this.id,
-    required this.question,
   });
   final String content;
   final String id;
-  final String question;
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -36,7 +34,6 @@ class _DetailScreenState extends State<DetailScreen> {
           _ad = ad;
         }, onAdFailedToLoad: (LoadAdError error) async {
           _ad = null;
-          await Share.share(controller.text);
         }));
   }
 
@@ -97,6 +94,11 @@ class _DetailScreenState extends State<DetailScreen> {
                     Navigator.of(context).pop();
                     return;
                   }
+                  if (controller.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("You can't save an empty text")));
+                    return;
+                  }
                   await Future.value(
                           Provider.of<DBProvider>(context, listen: false)
                               .editResponse(widget.id, controller.text))
@@ -116,24 +118,18 @@ class _DetailScreenState extends State<DetailScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  color: Colors.tealAccent,
-                  child: Text("Question:\n${widget.question}"),
-                ),
-                Container(color: Colors.amber, child: const Text("Response:")),
-                TextField(
-                  maxLines: null,
-                  controller: controller,
-                  textInputAction: TextInputAction.newline,
-                  decoration: const InputDecoration(
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                  ),
-                ),
-              ],
+            child: TextField(
+              maxLines: null,
+              controller: controller,
+              textInputAction: TextInputAction.newline,
+              decoration: const InputDecoration(
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontSize: 18),
             ),
           ),
         ));

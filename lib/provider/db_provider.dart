@@ -21,7 +21,7 @@ class DBProvider extends ChangeNotifier {
       ),
       onCreate: (db, version) async {
         return await db.execute(
-            "CREATE TABLE IF NOT EXISTS responses(id TEXT, content TEXT, date TEXT, question TEXT)");
+            "CREATE TABLE IF NOT EXISTS responses(id TEXT, content TEXT, date TEXT)");
       },
       version: 1,
     );
@@ -141,10 +141,10 @@ class DBProvider extends ChangeNotifier {
         await db.query("responses", orderBy: "date DSC");
     return List.generate(responses.length, (index) {
       return Response(
-          id: responses[index]["id"],
-          content: responses[index]["content"],
-          date: responses[index]["date"],
-          question: responses[index]["question"]);
+        id: responses[index]["id"],
+        content: responses[index]["content"],
+        date: responses[index]["date"],
+      );
     });
   }
 
@@ -155,10 +155,10 @@ class DBProvider extends ChangeNotifier {
         await db.query("responses", orderBy: "date ASC");
     return List.generate(responses.length, (index) {
       return Response(
-          id: responses[index]["id"],
-          content: responses[index]["content"],
-          date: responses[index]["date"],
-          question: responses[index]["question"]);
+        id: responses[index]["id"],
+        content: responses[index]["content"],
+        date: responses[index]["date"],
+      );
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_pa/keys/gemini_key.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MobileAds.instance.initialize();
 
   Gemini.init(apiKey: secreteKey, enableDebugging: true);

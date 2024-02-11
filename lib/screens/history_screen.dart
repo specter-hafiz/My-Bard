@@ -16,48 +16,45 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    {
-      return Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          title: const Text("History"),
-        ),
-        body: FutureBuilder(
-            future: Provider.of<DBProvider>(context).responsesList(),
-            builder: (context, snapshot) {
-              final responses = snapshot.data;
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: const Text("History"),
+      ),
+      body: FutureBuilder(
+          future: Provider.of<DBProvider>(context).responsesList(),
+          builder: (context, snapshot) {
+            final responses = snapshot.data;
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: const CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.data!.isNotEmpty) {
-                return ListView.builder(
-                    itemCount: responses!.length,
-                    itemBuilder: (context, index) {
-                      return ResponseItem(
-                        id: responses[index].id,
-                        content: responses[index].content,
-                        question: responses[index].question,
-                        date: responses[index].date,
-                      );
-                    });
-              }
-
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: Text(
-                  "No response(s) added yet!\nTap 🤍 on any generated response to add!",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
+                child: const CircularProgressIndicator(),
               );
-            }),
-      );
-    }
+            }
+            if (snapshot.data!.isNotEmpty) {
+              return ListView.builder(
+                  itemCount: responses!.length,
+                  itemBuilder: (context, index) {
+                    return ResponseItem(
+                      id: responses[index].id,
+                      content: responses[index].content,
+                      date: responses[index].date,
+                    );
+                  });
+            }
+
+            return Center(
+              child: Text(
+                "No response(s) added yet!\nTap 🤍 on any generated response to add!",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }),
+    );
   }
 }
 
@@ -66,13 +63,12 @@ class ResponseItem extends StatelessWidget {
     super.key,
     required this.id,
     required this.content,
-    required this.question,
     required this.date,
   });
 
   final String id;
   final String content;
-  final String question;
+
   final String date;
 
   @override
@@ -86,7 +82,6 @@ class ResponseItem extends StatelessWidget {
               builder: (context) => DetailScreen(
                 id: id,
                 content: content,
-                question: question,
               ),
             ),
           );
@@ -95,37 +90,25 @@ class ResponseItem extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
+            Expanded(
               child: Text(
-                question,
-                maxLines: 1,
+                content,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Flexible(
-              child: IconButton(
-                  onPressed: () {
-                    Provider.of<DBProvider>(context, listen: false)
-                        .deleteResponse(id);
-                  },
-                  icon: const Icon(Icons.delete_outlined)),
-            )
+            IconButton(
+                onPressed: () {
+                  Provider.of<DBProvider>(context, listen: false)
+                      .deleteResponse(id);
+                },
+                icon: const Icon(Icons.delete_outlined))
           ],
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        subtitle: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(
-              content,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(DateFormat.yMEd().format(DateTime.parse(date))),
-              ],
-            ),
+            Text(DateFormat.yMEd().format(DateTime.parse(date))),
           ],
         ),
       ),

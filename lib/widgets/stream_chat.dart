@@ -106,8 +106,19 @@ class _StreamChatState extends State<StreamChat> {
                           builder: (context) {
                             Future.delayed(const Duration(seconds: 2),
                                 () => Navigator.of(context).pop());
-                            return const AlertDialog(
-                              title: Text("Sorry,an error ocurred!"),
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 5,
+                              title: Text(
+                                "Sorry, an error ocurred!",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400),
+                              ),
                             );
                           });
                     });
@@ -189,10 +200,10 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                   IconButton(
                     onPressed: () async {
                       final response = Response(
-                          id: DateTime.now().toString(),
-                          content: (widget.content.parts?.lastOrNull?.text)!,
-                          date: DateTime.now().toString(),
-                          question: "widget.question");
+                        id: DateTime.now().toString(),
+                        content: (widget.content.parts?.lastOrNull?.text)!,
+                        date: DateTime.now().toString(),
+                      );
 
                       bool responseExist = await Provider.of<DBProvider>(
                               context,
@@ -223,8 +234,9 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                               // use to copy text to clipboard
                               text: (widget.content.parts?.lastOrNull?.text)!))
                           .then((_) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor:
+                              Theme.of(context).snackBarTheme.backgroundColor,
                           content: Text("Text copied"),
                           duration: Duration(
                             milliseconds: 500,
