@@ -214,10 +214,26 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                         await Provider.of<DBProvider>(context, listen: false)
                             .removeContent(response
                                 .content); //removes content from the DB if it exists
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor:
+                              Theme.of(context).snackBarTheme.backgroundColor,
+                          content: Text("Response has been removed"),
+                          duration: Duration(
+                            milliseconds: 600,
+                          ),
+                        ));
                       } else {
                         await Provider.of<DBProvider>(context, listen: false)
                             .addResponse(
                                 response); //it adds content to the DB if it doesn't exist
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor:
+                              Theme.of(context).snackBarTheme.backgroundColor,
+                          content: Text("Response added to history"),
+                          duration: Duration(
+                            milliseconds: 600,
+                          ),
+                        ));
                       }
 
                       setState(() {
@@ -239,7 +255,7 @@ class ChatItemWidgetState extends State<ChatItemWidget> {
                               Theme.of(context).snackBarTheme.backgroundColor,
                           content: Text("Text copied"),
                           duration: Duration(
-                            milliseconds: 500,
+                            milliseconds: 600,
                           ),
                         ));
                       });

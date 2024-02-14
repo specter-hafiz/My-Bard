@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:my_pa/keys/admob_key.dart';
+
 import 'package:my_pa/provider/db_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,56 +20,12 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   TextEditingController controller = TextEditingController();
 
-  InterstitialAd? _ad;
-  void loadInterstitialAd() {
-    final bannerAdsUnitId = Platform.isAndroid ? androidKey : iosKey;
-
-    InterstitialAd.load(
-        adUnitId: bannerAdsUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
-          _ad = ad;
-        }, onAdFailedToLoad: (LoadAdError error) async {
-          _ad = null;
-        }));
-  }
-
-  void showInterstitialAd() {
-    if (_ad == null) return;
-    _ad!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (aD) {
-        debugPrint("Ad showed full screen");
-      },
-      onAdFailedToShowFullScreenContent: (aD, err) async {
-        debugPrint("Ad failed to show full screen");
-
-        await Share.share(controller.text);
-        loadInterstitialAd();
-      },
-      onAdDismissedFullScreenContent: (aD) async {
-        debugPrint("Ad has been dismissed");
-        await Share.share(controller.text);
-
-        aD.dispose();
-        loadInterstitialAd();
-      },
-      onAdClicked: (aD) {},
-    );
-    _ad!.show();
-  }
-
   @override
   void initState() {
     super.initState();
-    loadInterstitialAd();
+
     controller = TextEditingController();
     controller.text = widget.content;
-  }
-
-  @override
-  void didChangeDependencies() {
-    loadInterstitialAd();
-    super.didChangeDependencies();
   }
 
   @override
@@ -110,7 +63,10 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
               IconButton(
                 onPressed: () async {
-                  controller.text.isEmpty ? null : showInterstitialAd();
+                  controller.text.isEmpty
+                      ? null
+                      : await Share.share(controller.text);
+                  ;
                 },
                 icon: const Icon(Icons.share_outlined),
               ),

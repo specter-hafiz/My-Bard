@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_pa/keys/gemini_key.dart';
 import 'package:my_pa/provider/db_provider.dart';
 import 'package:my_pa/provider/theme_provider.dart';
@@ -11,7 +10,6 @@ import 'package:provider/provider.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  MobileAds.instance.initialize();
 
   Gemini.init(apiKey: secreteKey, enableDebugging: true);
   runApp(MultiProvider(
@@ -34,15 +32,4 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(),
     );
   }
-}
-
-class SectionItem {
-  final int index;
-  final String title;
-  final Widget widget;
-  const SectionItem({
-    required this.index,
-    required this.title,
-    required this.widget,
-  });
 }
