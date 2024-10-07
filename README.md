@@ -1,4 +1,4 @@
-# my_pa
+# My Bard
 
 A mobile application built with flutter, google gemini api, provider and sqflite(local database)
 
